@@ -1,6 +1,5 @@
 import { Buffer } from "buffer";
 import {notify, secondsToHms, stringifyProperly} from './utilities'
-import Decimal from "decimal.js";
 
 export const majorversion = "1"
 export const version = "1.00d"
@@ -152,16 +151,16 @@ export const saveReducer = (state, action)=>{
         state.points -= action.cost
         break;
     case "resetSeason2":
-        state.doublers2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        state.points2 = 0 //new Decimal(0)
-        state.pointrate2 = 1 // new Decimal(1)
+        state.doublers2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        state.points2 = 0
+        state.pointrate2 = 1
         state.bestpoints = 0
         break;
     case "nextSeason":
         state.bestpoints = state.points2
-        state.doublers2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        state.points2 = 0 //new Decimal(0)
-        state.pointrate2 = 1 // new Decimal(1)
+        state.doublers2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        state.points2 = 0 
+        state.pointrate2 = 1
         break;
     case "buyDoubler2":
         state.pointrate2 *= 2

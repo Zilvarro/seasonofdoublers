@@ -13,8 +13,8 @@ export default function DoublerFastTab({state, popup, updateState, setTotalClick
     const unlock = [5e1,5e2,5e3,5e4,5e6,5e8,5e10,5e12,5e14,5e17,5e22,5e31,5e46,5e71,5e139]
 
     return <div>
-      You have {formatNumber(state.points2, state.settings.numberFormat, 3,false,false)} points.<br/>
-      You gain {formatNumber(state.pointrate2, state.settings.numberFormat, 3,false,false)} points per second.<br/><br/>
+      You have {formatNumber(state.points2, state.settings.numberFormat, 3,false,false)} point{Math.floor(state.points2) !== 1 && "s"}.<br/>
+      You gain {formatNumber(state.pointrate2, state.settings.numberFormat, 3,false,false)} point{state.pointrate2 !== 1 && "s"} per second.<br/><br/>
   
       {state.doublers2.map((level,index)=>{
         if (state.bestpoints >= unlock[index])
