@@ -1,0 +1,29 @@
+{
+  "short_name": "Season of Doublers",
+  "name": "Season of Doublers",
+  "description": "An idle game about doubling the rate at which points are gained.",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#111111",
+  "background_color": "#111111",
+  "icons": [
+    {
+      "src": "IconAppDownloadMask.png", 
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    },
+    {
+      "src": "IconAppDownload.png", 
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
+  ],
+  "orientation": "any",
+  "screenshots": [],
+  "shortcuts": [],
+  "dir": "ltr",
+  "scope": "https://zilvarro.github.io/seasonofdoublers",
+  "lang": "en"
+}
