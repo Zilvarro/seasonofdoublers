@@ -28,6 +28,10 @@ export const newSave = {
     pointrate2: 1,
     doublers2: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     bestpoints: 0,
+    points3: 0,
+    pointrate3: 1,
+    doublers3: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    bestpoints3: 10,
     settings: {
         valueReduction: "ON",
         offlineProgress: "ON",
@@ -119,9 +123,8 @@ export const saveReducer = (state, action)=>{
 
         //Points for Season of Doubling
         state.points += state.pointrate * deltaMilliSeconds / 1000
-        //debugger;
-        state.points2 += state.pointrate2 * deltaMilliSeconds / 1000
-        //state.points2 = state.points2.plus(state.pointrate2.times(deltaMilliSeconds / 1000) ) 
+        state.points2 += state.pointrate2 * deltaMilliSeconds / 1000 
+        state.points3 += state.pointrate3 * deltaMilliSeconds / 1000 
 
         break;
     case "selectTab":
@@ -156,16 +159,33 @@ export const saveReducer = (state, action)=>{
         state.pointrate2 = 1
         state.bestpoints = 0
         break;
+    case "resetSeason3":
+        state.doublers3 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        state.points3 = 0
+        state.pointrate3 = 1
+        state.bestpoint3 = 10
+        break;
     case "nextSeason":
         state.bestpoints = state.points2
         state.doublers2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         state.points2 = 0 
         state.pointrate2 = 1
         break;
+    case "nextSeason3":
+        state.bestpoints3 = state.points3
+        state.doublers3 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        state.points3 = 0 
+        state.pointrate3 = Math.floor(Math.log10(state.bestpoints3))
+        break;
     case "buyDoubler2":
         state.pointrate2 *= 2
         state.doublers2[action.index]++
         state.points2 -= action.cost
+        break;
+    case "buyDoubler3":
+        state.pointrate3 *= 2
+        state.doublers3[action.index]++
+        state.points3 -= action.cost
         break;
     default:
         console.error("Action " + action.name + " not found.")
