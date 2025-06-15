@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/seasonofdoublers/static/css/main.cdd4b8fb.css",
+    "main.js": "/seasonofdoublers/static/js/main.090481d0.js",
+    "service-worker.js": "/seasonofdoublers/service-worker.js",
+    "static/media/AstroDotBasic.ttf": "/seasonofdoublers/static/media/AstroDotBasic.1e9941d39ecdb0a55023.ttf",
+    "index.html": "/seasonofdoublers/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.cdd4b8fb.css",
+    "static/js/main.090481d0.js"
+  ]
+}
