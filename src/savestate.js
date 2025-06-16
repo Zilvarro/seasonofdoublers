@@ -10,9 +10,6 @@ export const newSave = {
     version: version,
     productive: productive,
     progressionLayer: 0,
-    selectedTabKey: "DoublerScreen",
-    selectedDoublerTabKey: "DoublerFastTab",
-    
     saveTimeStamp: 0,
     calcTimeStamp: 0,
     fileStartTimeStamp: -1,
@@ -24,14 +21,16 @@ export const newSave = {
     points: 0,
     pointrate: 1,
     doublers: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    points2: 0,
-    pointrate2: 1,
-    doublers2: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    bestpoints: 0,
-    points3: 0,
-    pointrate3: 1,
-    doublers3: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    bestpoints3: 10,
+    auto: [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
+    seasons: 0,
+    seasonMult: 1,
+    seasonMultLevel: 0,
+    autoLevel: 0,
+    autoSeason: false,
+    autoSeasonActive: false,
+    autoSeasonDoubler: false,
+    autoSeasonDoublerActive: false,
+    win: false,
     settings: {
         valueReduction: "ON",
         offlineProgress: "ON",
@@ -94,6 +93,19 @@ export const save = (state)=>{
     window.localStorage.setItem('seasonofdoublers_v' + majorversion, encodedGame)
 }
 
+const finishSeason = (state)=>{
+  state.seasons++
+  state.doublers = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  state.points = 0 
+  state.pointrate = state.seasonMult
+}
+
+const buySeasonDoubler = (state)=>{
+  state.seasonMult *= 2
+  state.pointrate *= 2
+  state.seasonMultLevel++
+}
+
 export const saveReducer = (state, action)=>{
     const popup = action.popup
     switch(action.name){
@@ -121,17 +133,50 @@ export const saveReducer = (state, action)=>{
             save(state)
         }
 
-        //Points for Season of Doubling
-        state.points += state.pointrate * deltaMilliSeconds / 1000
-        state.points2 += state.pointrate2 * deltaMilliSeconds / 1000 
-        state.points3 += state.pointrate3 * deltaMilliSeconds / 1000 
+        const calcProgress = (state, deltaMilliSeconds)=>{
+          //Points for Season of Doubling
+          state.points += state.pointrate * deltaMilliSeconds / 1000
+  
+          //Auto Doublers
+          const factors = [1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1]
+          for (let i = 0; i < state.doublers.length; i++) {
+            if (state.auto[i]) {
+              let cost = factors[i]*Math.pow(10,(state.doublers[i]+1)*(i+1))
+              if (state.points >= cost) {
+                state.pointrate *= 2
+                state.doublers[i]++
+                if (cost !== Infinity) state.points -= cost
+              }
+            }
+          }
+  
+          //Auto Season
+          if (state.autoSeasonActive && state.points === Infinity) {
+            finishSeason(state)
+          }
+
+          //Auto Season Doubler
+          if (state.autoSeasonDoublerActive && state.seasons > state.seasonMultLevel) {
+            buySeasonDoubler(state)
+          }
+
+          //Prevent NaN
+          if (isNaN(state.points))
+            state.points = Infinity
+        }
+
+        //Calculate 120 ticks in Offline Progress usecase
+        if (deltaMilliSeconds > 120000) {
+          for (let i = 0; i < 120; i++) {
+            calcProgress(state, deltaMilliSeconds / 120)
+          }
+        } else {
+          calcProgress(state, deltaMilliSeconds)
+        }
 
         break;
     case "selectTab":
         state.selectedTabKey = action.tabKey
-        break;
-    case "selectDoublerTab":
-        state.selectedDoublerTabKey = action.tabKey
         break;
     case "hardreset":
         state = {...structuredClone(newSave), calcTimeStamp: Date.now(), saveTimeStamp: Date.now(), fileStartTimeStamp: Date.now()};
@@ -151,41 +196,34 @@ export const saveReducer = (state, action)=>{
     case "buyDoubler":
         state.pointrate *= 2
         state.doublers[action.index]++
-        state.points -= action.cost
+        if (action.cost !== Infinity) state.points -= action.cost
         break;
-    case "resetSeason2":
-        state.doublers2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        state.points2 = 0
-        state.pointrate2 = 1
-        state.bestpoints = 0
+    case "buySeasonDoubler":
+        buySeasonDoubler(state)
         break;
-    case "resetSeason3":
-        state.doublers3 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        state.points3 = 0
-        state.pointrate3 = 1
-        state.bestpoint3 = 10
+    case "buyAuto":
+        state.autoLevel++
         break;
-    case "nextSeason":
-        state.bestpoints = state.points2
-        state.doublers2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        state.points2 = 0 
-        state.pointrate2 = 1
+    case "finishSeason":
+        finishSeason(state)
         break;
-    case "nextSeason3":
-        state.bestpoints3 = state.points3
-        state.doublers3 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        state.points3 = 0 
-        state.pointrate3 = Math.floor(Math.log10(state.bestpoints3))
+    case "toggleAuto":
+        state.auto[action.index] = !state.auto[action.index]
         break;
-    case "buyDoubler2":
-        state.pointrate2 *= 2
-        state.doublers2[action.index]++
-        state.points2 -= action.cost
+    case "toggleAutoSeason":
+        state.autoSeasonActive = !state.autoSeasonActive
         break;
-    case "buyDoubler3":
-        state.pointrate3 *= 2
-        state.doublers3[action.index]++
-        state.points3 -= action.cost
+    case "toggleAutoSeasonDoubler":
+        state.autoSeasonDoublerActive = !state.autoSeasonDoublerActive
+        break;
+    case "buyAutoSeason":
+        state.autoSeason = true
+        break;
+    case "buyAutoSeasonDoubler":
+        state.autoSeasonDoubler = true
+        break;
+    case "buyWin":
+        state.win = true
         break;
     default:
         console.error("Action " + action.name + " not found.")

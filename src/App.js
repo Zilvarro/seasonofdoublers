@@ -9,6 +9,7 @@ import {PopupDialog, makeShowPopup} from './PopupDialog'
 import KeyBoardHandler from './KeyBoardHandler';
 import { schedulePeriodicUpdateChecks } from './serviceWorkerRegistration';
 import DoublerScreen from './doublers/DoublerScreen';
+import SeasonScreen from './season/SeasonScreen';
 
 function App() {
   const [ playTime, setPlayTime ] = useState(0)
@@ -52,6 +53,7 @@ function App() {
     <PopupDialog popupState={popupState} setPopupState={setPopupState} discardable={state.settings.hotkeyDiscardPopup === "ON"}/>
     <TabContent selectedTabKey={state.selectedTabKey}>
       <DoublerScreen tabKey="DoublerScreen" popup={popup} state={state} updateState={updateState} setTotalClicks={setTotalClicks}/>
+      <SeasonScreen tabKey="SeasonScreen" popup={popup} state={state} updateState={updateState} setTotalClicks={setTotalClicks}/>
       <OptionScreen tabKey="OptionScreen" popup={popup} state={state} updateState={updateState} setTotalClicks={setTotalClicks}/>
     </TabContent>
     <p>&nbsp;</p>
@@ -59,6 +61,7 @@ function App() {
     <footer>
     <span style={{display:"inline-block"}}>
       {<button style={{backgroundColor: "#AAAAAA", border:"2px solid", padding:"5px", margin:"5px", fontWeight:"bold"}} onClick={()=>selectTab("DoublerScreen")}>Doublers</button>}
+      {state.seasons > 0 && <button style={{backgroundColor: "#FFFF00", border:"2px solid", padding:"5px", margin:"5px", fontWeight:"bold"}} onClick={()=>selectTab("SeasonScreen")}>Season</button>}
     </span>
     <span style={{display:"inline-block"}}>
       <button style={{margin:"5px"}} onClick={()=>selectTab("OptionScreen")}>Options</button>
